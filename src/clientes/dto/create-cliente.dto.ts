@@ -1,6 +1,6 @@
 // Se definen los datos que el endpoint espera al momento de, en este caso, crear un cliente
 
-import { IsDateString, IsEmail, IsString, Max } from "class-validator";
+import { IsDateString, IsEmail, IsString } from "class-validator";
 
 // Tambien se definen validaciones
 export class CreateClienteDto {

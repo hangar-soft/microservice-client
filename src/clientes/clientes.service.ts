@@ -1,8 +1,9 @@
-import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { PrismaClient } from '@prisma/client';
 import { PaginationDto } from 'src/common';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ClientesService extends PrismaClient implements OnModuleInit {
@@ -45,7 +46,10 @@ export class ClientesService extends PrismaClient implements OnModuleInit {
     });
 
     if ( !result) {
-      throw new NotFoundException(`Client with dni ${dni} not found`);
+      throw new RpcException({
+        status: HttpStatus.BAD_REQUEST,
+        message: `Client with dni ${dni} not found`
+      });
     }
 
     return result;
