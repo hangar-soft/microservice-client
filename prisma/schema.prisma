@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model client {
+  id         Int      @id @default(autoincrement())
+  dni        String   @unique(map: "unique_dni") @db.VarChar(12)
+  first_name String   @db.VarChar(250)
+  last_name  String   @db.VarChar(250)
+  phone      String   @db.VarChar(20)
+  email      String   @db.VarChar(250)
+  birthday   DateTime @db.Date
+  genre      String   @db.VarChar(20)
+  country    String   @db.VarChar(150)
+  state      String   @db.VarChar(150)
+  created_at DateTime @default(now()) @db.Date
+  status     Boolean? @default(true)
+
+  @@index([status], map: "index_status")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model employee {
+  id          Int      @id
+  role        String   @db.VarChar(100)
+  department  String   @db.VarChar(100)
+  hire_date   DateTime @db.Date
+  profile_dni String   @db.VarChar(250)
+  created_at  DateTime @db.Date
+  user_email  String   @db.VarChar(250)
+  profile     profile  @relation(fields: [profile_dni], references: [dni], onDelete: NoAction, onUpdate: NoAction, map: "profile_employee")
+  user        user     @relation(fields: [user_email], references: [email], onDelete: NoAction, onUpdate: NoAction, map: "user_employee")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model profile {
+  id         Int        @default(autoincrement())
+  dni        String     @id @db.VarChar(12)
+  first_name String     @db.VarChar(250)
+  last_name  String     @db.VarChar(250)
+  phone      String     @db.VarChar(15)
+  address    String     @db.VarChar(250)
+  birthday   DateTime   @db.Date
+  genre      String     @db.VarChar(10)
+  created_at DateTime   @db.Date
+  employee   employee[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model user {
+  id         Int        @default(autoincrement())
+  username   String     @id @db.VarChar(50)
+  password   String     @db.VarChar(50)
+  created_at DateTime   @db.Date
+  email      String     @unique(map: "unique_email") @db.VarChar(250)
+  employee   employee[]
+}
